@@ -76,6 +76,11 @@ public:
     BNO055_SW_REV_ID_LSB_ADDR = 0x04,
     BNO055_SW_REV_ID_MSB_ADDR = 0x05,
     BNO055_BL_REV_ID_ADDR = 0X06,
+	
+	BNO055_ACC_CONFIG_ADDR = 0X08, // page 1
+	BNO055_MAG_CONFIG_ADDR = 0X09, // page 1
+	BNO055_GYR_CONFIG_0_ADDR = 0X0A, // page 1
+	BNO055_GYR_CONFIG_1_ADDR = 0X0B, // page 1
 
     /* Accel data register */
     BNO055_ACCEL_DATA_X_LSB_ADDR = 0X08,
@@ -260,6 +265,29 @@ public:
     REMAP_SIGN_P6 = 0x07,
     REMAP_SIGN_P7 = 0x05
   } adafruit_bno055_axis_remap_sign_t;
+  
+  /** Accelerometer range selection **/
+  typedef enum
+  {
+    ACC_RANGE_2G = 0x00,
+    ACC_RANGE_4G = 0x01, // The default
+    ACC_RANGE_8G = 0x02,
+    ACC_RANGE_16G = 0x03
+  } adafruit_bno055_acc_range_t;
+  
+  // Accelerometer bandwidth selection **/
+  
+  typedef enum
+  {
+    ACC_BANDWIDTH_8Hz = 0x00,      // 7.81 Hz
+    ACC_BANDWIDTH_16Hz = 0x01,     // 15.63 Hz
+    ACC_BANDWIDTH_31Hz = 0x02,     // 31.25 Hz
+    ACC_BANDWIDTH_62Hz = 0x03,     // 62.5 Hz
+    ACC_BANDWIDTH_125Hz = 0x04,
+    ACC_BANDWIDTH_250Hz = 0x05,
+    ACC_BANDWIDTH_500Hz = 0x06,
+    ACC_BANDWIDTH_1000Hz = 0x07,
+  } adafruit_bno055_acc_bandwidth_t;  
 
   /** A structure to represent revisions **/
   typedef struct {
@@ -283,7 +311,9 @@ public:
   Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A,
                   TwoWire *theWire = &Wire);
 
-  bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
+  bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF, adafruit_bno055_acc_range_t range=ACC_RANGE_4G);
+  void setAccRange(adafruit_bno055_acc_range_t range);
+  void setAccBandWidth(adafruit_bno055_acc_bandwidth_t bw);
   void setMode(adafruit_bno055_opmode_t mode);
   void setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
   void setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);

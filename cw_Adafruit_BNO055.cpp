@@ -32,7 +32,7 @@
 #include <limits.h>
 #include <math.h>
 
-#include "Adafruit_BNO055.h"
+#include "cw_Adafruit_BNO055.h"
 
 /*!
  *  @brief  Instantiates a new Adafruit_BNO055 class
@@ -69,7 +69,7 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
  *            OPERATION_MODE_NDOF]
  *  @return true if process is successful
  */
-bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
+bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode, adafruit_bno055_acc_range_t range) {
 #if defined(ARDUINO_SAMD_ZERO) && (_address == BNO055_ADDRESS_A)
 #error                                                                         \
     "On an arduino Zero, BNO055's ADR pin must be high. Fix that, then delete this line."
@@ -107,7 +107,10 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
   /* Set to normal power mode */
   write8(BNO055_PWR_MODE_ADDR, POWER_MODE_NORMAL);
   delay(10);
-
+  
+  setAccRange(range);
+  setAccBandWidth(ACC_BANDWIDTH_31Hz);
+  
   write8(BNO055_PAGE_ID_ADDR, 0);
 
   /* Set the output units */
@@ -135,6 +138,32 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
   delay(20);
 
   return true;
+}
+
+void Adafruit_BNO055::setAccRange(adafruit_bno055_acc_range_t range)
+{
+  write8(BNO055_PAGE_ID_ADDR, 1);
+  delay(10);
+  byte bits = read8(BNO055_ACC_CONFIG_ADDR);
+  delay(10);
+  bits = (bits & -4) | (range & 3);
+  write8(BNO055_ACC_CONFIG_ADDR, bits);  
+  delay(10);
+  write8(BNO055_PAGE_ID_ADDR, 0);
+  delay(10);
+}
+
+void Adafruit_BNO055::setAccBandWidth(adafruit_bno055_acc_bandwidth_t bw)
+{
+  write8(BNO055_PAGE_ID_ADDR, 1);
+  delay(10);
+  byte bits = read8(BNO055_ACC_CONFIG_ADDR);
+  delay(10);
+  bits = (bits & 0xE3) | ((bw & 7) << 2);
+  write8(BNO055_ACC_CONFIG_ADDR, bits);  
+  delay(10);
+  write8(BNO055_PAGE_ID_ADDR, 0);
+  delay(10);
 }
 
 /*!
