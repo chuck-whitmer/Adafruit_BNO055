@@ -275,14 +275,15 @@ public:
     ACC_RANGE_16G = 0x03
   } adafruit_bno055_acc_range_t;
   
-  // Accelerometer bandwidth selection **/
+  /** Accelerometer bandwidth selection **/
+  // ODR (output data rate) = 2 * bandwidth
   
   typedef enum
   {
     ACC_BANDWIDTH_8Hz = 0x00,      // 7.81 Hz
     ACC_BANDWIDTH_16Hz = 0x01,     // 15.63 Hz
     ACC_BANDWIDTH_31Hz = 0x02,     // 31.25 Hz
-    ACC_BANDWIDTH_62Hz = 0x03,     // 62.5 Hz
+    ACC_BANDWIDTH_62Hz = 0x03,     // 62.5 Hz = default => new data every 8 msec.
     ACC_BANDWIDTH_125Hz = 0x04,
     ACC_BANDWIDTH_250Hz = 0x05,
     ACC_BANDWIDTH_500Hz = 0x06,
@@ -344,9 +345,10 @@ public:
   void enterSuspendMode();
   void enterNormalMode();
 
+  bool readLen(adafruit_bno055_reg_t, byte *buffer, uint8_t len);
+
 private:
   byte read8(adafruit_bno055_reg_t);
-  bool readLen(adafruit_bno055_reg_t, byte *buffer, uint8_t len);
   bool write8(adafruit_bno055_reg_t, byte value);
 
   uint8_t _address;

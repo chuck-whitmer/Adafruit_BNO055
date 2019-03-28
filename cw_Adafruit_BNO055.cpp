@@ -109,8 +109,13 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode, adafruit_bno055_acc_r
   delay(10);
   
   setAccRange(range);
-  setAccBandWidth(ACC_BANDWIDTH_31Hz);
   
+  // The default ACC bandwidth is 62.5 Hz, which means that new output (ODR) appears at 125 Hz.
+  //setAccBandWidth(ACC_BANDWIDTH_31Hz);
+  
+  // The default GYRO filter bandwidth is set to 32 Hz. The ODR is 100 Hz.
+  // (It can be useful to read the BMX055 documentation. In some deep way it is a related chip.)
+    
   write8(BNO055_PAGE_ID_ADDR, 0);
 
   /* Set the output units */
